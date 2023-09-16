@@ -8,7 +8,7 @@ class ClienteSchema(BaseModel):
     """
     email: str = "abc@gmail.com"
     nome: str = "abc@gmail.com"
-    idade: float = 78.90
+    idade: int = 27
     cpf: str = "000.000.000-00"
 
 
@@ -25,9 +25,8 @@ class ClienteViewSchema(BaseModel):
     id: int = 1
     email: str = "abc@gmail.com"
     nome: str = "abc@gmail.com"
-    idade: float = 78.90
+    idade: int = 27
     cpf: str = "000.000.000-00"
-
 
 
 class ListagemClientesSchema(BaseModel):
@@ -41,7 +40,6 @@ class ClienteDelSchema(BaseModel):
         de remoção.
     """
     message: str
-    numero_entrega: str
 
 
 def apresenta_clientes(clientes: List[Cliente]):

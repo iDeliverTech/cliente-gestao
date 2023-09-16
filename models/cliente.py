@@ -4,6 +4,7 @@ from typing import Union
 
 from models import Base
 
+
 class Cliente(Base):
     __tablename__ = 'cliente'
 
