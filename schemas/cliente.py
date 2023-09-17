@@ -37,9 +37,41 @@ class ListagemClientesSchema(BaseModel):
 
 class ClienteDelSchema(BaseModel):
     """ Define como deve ser a estrutura do dado retornado após uma requisição
-        de remoção.
+        de remoção e alteração.
     """
     message: str
+
+
+class ClienteAtualizacaoSchema(BaseModel):
+    """ Define como deve ser a estrutura que representa a atualização.
+    """
+    cpf: str
+    email: str
+    nome: str
+    idade: int
+
+
+class EntregaViewSchema(BaseModel):
+    """ Define como deve ser a estrutura do dado retornado após uma requisição
+        de alteração.
+    """
+    message: str
+    numero_entrega: str
+
+
+class EntregaStatusSchema(BaseModel):
+    """ Define como deve ser a estrutura que representa a atualização do status da entrega, que será
+        feita apenas com base no campo booleano e o numero da entrega.
+    """
+    numero_entrega: int = 1505
+    entrega_realizada: bool = False
+
+
+class EntregaBuscaSchema(BaseModel):
+    """ Define como deve ser a estrutura que representa a busca. Que será
+        feita apenas com base no numero da entrega.
+    """
+    numero_entrega: int = 1505
 
 
 def apresenta_clientes(clientes: List[Cliente]):
