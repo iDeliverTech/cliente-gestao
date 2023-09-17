@@ -1,5 +1,5 @@
 from flask_openapi3 import OpenAPI, Info, Tag
-from flask import redirect
+from flask import redirect, jsonify
 from urllib.parse import unquote
 
 from sqlalchemy.exc import IntegrityError
@@ -188,24 +188,21 @@ def atualizar_cliente(query: ClienteAtualizacaoSchema):
 @app.post('/confirmar_recebimento_entrega', tags=[cliente_tag],
           responses={"200": EntregaViewSchema, "400": ErrorSchema})
 def confirmar_recebimento_entrega(query: EntregaStatusSchema):
-    """Alterer o status de uma entrega
+    """Alterar o status de uma entrega
 
     Retorna uma mensagem do status do processo.
     """
 
+    numero = query.numero_entrega
+    is_entrega_realizada = query.entrega_realizada
+
     # URL do endpoint no Componente A para atualizar o status da entrega
-    url = 'http://localhost:5000/atualizar_status_entrega'
+    url = f'http://127.0.0.1:5000/atualizar_status_entrega?numero_entrega={numero}&entrega_realizada={is_entrega_realizada}'
 
-    # Dados a serem enviados no corpo da solicitação POST
-    data = {
-        'numero_entrega': query.numero_entrega,
-        'entrega_realizada': query.entrega_realizada
-    }
+    # Faça uma solicitação POST para o Componente A com os parâmetros na URL
+    response = requests.put(url)
 
-    # Faça uma solicitação PUT para o Componente A
-    response = requests.put(url, json=data)
-
- # Verifique se a solicitação foi bem-sucedida
+    # Verifique se a solicitação foi bem-sucedida
     if response.status_code == 200:
         # A entrega foi atualizada com sucesso
         entrega_atualizada = response.json()
@@ -216,8 +213,8 @@ def confirmar_recebimento_entrega(query: EntregaStatusSchema):
         return {"message": f"Erro ao atualizar o status da entrega. Código de status: {response.status_code}"}
 
 
-@app.post('/status_pedido', tags=[cliente_tag],
-          responses={"200": EntregaStatusSchema, "404": ErrorSchema})
+@app.get('/status_pedido', tags=[cliente_tag],
+         responses={"200": EntregaStatusSchema, "404": ErrorSchema})
 def status_pedido(query: EntregaBuscaSchema):
     """Faz a busca por uma entrega a partir do numero da entrega
 
@@ -227,26 +224,27 @@ def status_pedido(query: EntregaBuscaSchema):
     logger.debug(f"Coletando dados sobre a entrega #{numero}")
 
     # URL do endpoint no Componente A para buscar informações de entrega
-    url = 'http://localhost:5000/buscar_entrega_numero'
+    url = f'http://127.0.0.1:5000/buscar_entrega_numero?numero_entrega={numero}'
 
-    # Dados a serem enviados no corpo da solicitação POST
-    data = {'numero_entrega': numero}
-
-    # Faça uma solicitação POST para o Componente A com os dados no corpo
-    response = requests.post(url, json=data)
+    # Faça uma solicitação GET para o Componente A com os dados na URL
+    response = requests.get(url)
 
     if response.status_code == 200:
-        # Se a solicitação foi bem-sucedida, retorne a representação de entrega
-        entrega = response.json()
+        # Se a solicitação foi bem-sucedida, retorna apenas os campos desejados
+        entrega_data = response.json()  # Dados completos da entrega
         logger.debug(f"Entrega encontrada: '{numero}'")
-        return entrega, 200
+        entrega = {
+            "numero_entrega": entrega_data['numero_entrega'],
+            "entrega_realizada": entrega_data['entrega_realizada']
+        }
+        return jsonify(entrega)
     elif response.status_code == 404:
         # Se a entrega não foi encontrada, retorne um erro 404
         error_msg = "Entrega não encontrada na base :/"
         logger.warning(f"Erro ao buscar entrega '{numero}', {error_msg}")
-        return {"message": error_msg}, 404
+        return jsonify({"error": error_msg}), 404
     else:
         # Em caso de outros erros, retorne um erro 500
         logger.error(
             f"Erro ao buscar entrega '{numero}', Código de status: {response.status_code}")
-        return {"message": "Erro ao buscar entrega."}, 500
+        return jsonify({"error": "Erro interno do servidor"}), 500

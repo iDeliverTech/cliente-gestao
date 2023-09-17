@@ -7,7 +7,7 @@ class ClienteSchema(BaseModel):
     """ Define como um cliente deve ser representado
     """
     email: str = "abc@gmail.com"
-    nome: str = "abc@gmail.com"
+    nome: str = "Gabriela Santos"
     idade: int = 27
     cpf: str = "000.000.000-00"
 
@@ -24,7 +24,7 @@ class ClienteViewSchema(BaseModel):
     """
     id: int = 1
     email: str = "abc@gmail.com"
-    nome: str = "abc@gmail.com"
+    nome: str = "Gabriela Santos"
     idade: int = 27
     cpf: str = "000.000.000-00"
 
