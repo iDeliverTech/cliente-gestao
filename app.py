@@ -27,6 +27,22 @@ def home():
     """
     return redirect('/openapi')
 
+# Função para formatar CPF
+def formatar_cpf(cpf):
+    cpf_formatado = '{}.{}.{}-{}'.format(cpf[:3], cpf[3:6], cpf[6:9], cpf[9:])
+    return cpf_formatado
+
+# Função para validar CPF
+def validar_cpf(cpf):
+    if len(cpf) < 11:
+        raise ValueError("CPF deve conter no mínimo 11 caracteres.")
+    elif len(cpf) == 11:
+        return formatar_cpf(cpf)
+    elif len(cpf) == 14:
+        return cpf
+    elif len(cpf) > 11 & len(cpf) < 14:
+        raise ValueError("CPF inválido.")
+
 
 @app.post('/cadastrar_cliente', tags=[cliente_tag],
           responses={"200": ClienteViewSchema, "409": ErrorSchema, "400": ErrorSchema})
@@ -35,11 +51,14 @@ def cadastrar_cliente(form: ClienteSchema):
 
     Retorna uma representação dos clientes.
     """
+
+    cpf = validar_cpf(form.cpf)
+
     cliente = Cliente(
         email=form.email,
         nome=form.nome,
         idade=form.idade,
-        cpf=form.cpf
+        cpf=cpf
     )
     logger.debug(f"Adicionando cliente de nome: '{cliente.nome}'")
     try:
@@ -97,7 +116,7 @@ def buscar_cliente_cpf(query: ClienteBuscaSchema):
 
     Retorna uma representação dos clientes.
     """
-    cliente_cpf = query.cpf
+    cliente_cpf = validar_cpf(query.cpf)
     logger.debug(f"Coletando dados sobre cliente #{cliente_cpf}")
     # criando conexão com a base
     session = Session()
@@ -123,7 +142,8 @@ def deletar_cliente(query: ClienteBuscaSchema):
 
     Retorna uma mensagem de confirmação da remoção.
     """
-    cliente_cpf = unquote(unquote(query.cpf))
+    cpf = validar_cpf(query.cpf)
+    cliente_cpf = unquote(unquote(cpf))
     print(cliente_cpf)
     logger.debug(f"Deletando dados sobre cliente #{cliente_cpf}")
     # criando conexão com a base
@@ -152,7 +172,7 @@ def atualizar_cliente(query: ClienteAtualizacaoSchema):
     Retorna uma mensagem de confirmação da atualização.
     """
 
-    cpf = query.cpf
+    cpf = validar_cpf(query.cpf)
 
     # criando conexão com a base
     session = Session()
