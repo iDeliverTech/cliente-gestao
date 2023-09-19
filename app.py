@@ -268,3 +268,7 @@ def status_pedido(query: EntregaBuscaSchema):
         logger.error(
             f"Erro ao buscar entrega '{numero}', Código de status: {response.status_code}")
         return jsonify({"error": "Erro interno do servidor"}), 500
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5001)
