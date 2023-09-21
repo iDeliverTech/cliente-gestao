@@ -1,4 +1,4 @@
-# cliente-gestao
+# Microsserviço B - Cliente-Gestao
 Este repositório abrigará o código e os recursos associados ao microsserviço responsável pelo gerenciamento das informações dos clientes em seu sistema.
 
 > É de suma importância que este Microsserviço seja iniciado após o Microsserviço A (Entrega-Gestão) para garantir que ambos estejam na mesma rede e possam se comunicar.
@@ -26,11 +26,11 @@ docker build -t ideliver-tech-cliente:1.0 .
 &nbsp;
 
 
-Este comando executa um contêiner Docker com o nome container-cliente, usando a imagem ideliver-tech-cliente:1.0. Ele define a variável de ambiente DOCKER_ENV como true, mapeia a porta 5001 do host para a porta 5001 do contêiner e conecta o contêiner à rede rede-deliver. Isso permite que sua aplicação seja executada em um ambiente Docker configurado adequadamente, pronto para se comunicar com outros microserviços na mesma rede.
+Este comando executa um contêiner Docker com o nome `ideliver-cliente`, usando a imagem `ideliver-tech-cliente:1.0`. Ele define a variável de ambiente `DOCKER_ENV` como true, mapeia a porta 5001 do host para a porta 5001 do contêiner e conecta o contêiner à rede `rede-deliver`. Isso permite que sua aplicação seja executada em um ambiente Docker configurado adequadamente, pronto para se comunicar com outros microserviços na mesma rede.
 ```
-docker run -e DOCKER_ENV=true -p 5001:5001 --name container-cliente --network rede-deliver ideliver-tech-cliente:1.0
+docker run -e DOCKER_ENV=true -p 5001:5001 --name ideliver-cliente --network rede-deliver ideliver-tech-cliente:1.0
 ```
-> É de suma importância que o Microsserviço A seja iniciado antes do Microsserviço B (Cliente-Gestão), uma vez que ambos compartilham a mesma rede rede-deliver. Certifique-se de que o Microsserviço A esteja em execução para garantir uma comunicação eficaz entre os dois microserviços.
+> É de suma importância que o Microsserviço A seja iniciado antes do Microsserviço B (Cliente-Gestão), uma vez que ambos compartilham a mesma rede `rede-deliver`. Certifique-se de que o Microsserviço A esteja em execução para garantir uma comunicação eficaz entre os dois microserviços.
 
 
 &nbsp;
@@ -67,8 +67,6 @@ $ .\env\Scripts\activate
 
 &nbsp;
 
-
-Agora, estando no ambiente virtual, execute o comando abaixo para execução via docker:
 
 Estando no ambiente virtual, execute o comando abaixo:
 
