@@ -16,5 +16,5 @@ EXPOSE 5001
 # Define o comando padrão a ser executado quando o contêiner for iniciado
 CMD ["python", "app.py"]
 
-# docker build -t ideliver-tech:1.0 .
-# docker run -p 5001:5001 --name ideliver-container ideliver-tech:1.0
+# docker build -t ideliver-tech-cliente:1.0 .
+# docker run -e DOCKER_ENV=true -p 5001:5001 --name container-cliente --network rede-deliver ideliver-tech-cliente:1.0

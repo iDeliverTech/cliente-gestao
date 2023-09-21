@@ -9,7 +9,7 @@ from logger import logger
 from schemas import *
 from flask_cors import CORS
 
-import requests
+import requests, os
 
 info = Info(title="API destinada para o projeto iDeliverTech, Microsserviço responsável pelo gerenciamento de clientes ", version="1.0.0")
 app = OpenAPI(__name__, info=info)
@@ -26,6 +26,14 @@ def home():
     """Redireciona para /openapi, tela que permite a escolha do estilo de documentação.
     """
     return redirect('/openapi')
+
+
+# Definindo o host conforme o tipo de execução
+if os.getenv("DOCKER_ENV") == "true":
+    HOST = 'ideliver-entrega'
+else:
+    HOST = '127.0.0.1'
+
 
 # Função para formatar CPF
 def formatar_cpf(cpf):
@@ -217,7 +225,7 @@ def confirmar_recebimento_entrega(query: EntregaStatusSchema):
     is_entrega_realizada = query.entrega_realizada
 
     # URL do endpoint no Componente A para atualizar o status da entrega
-    url = f'http://127.0.0.1:5000/atualizar_status_entrega?numero_entrega={numero}&entrega_realizada={is_entrega_realizada}'
+    url = f'http://{HOST}:5000/atualizar_status_entrega?numero_entrega={numero}&entrega_realizada={is_entrega_realizada}'
 
     # Faça uma solicitação POST para o Componente A com os parâmetros na URL
     response = requests.put(url)
@@ -244,7 +252,7 @@ def status_pedido(query: EntregaBuscaSchema):
     logger.debug(f"Coletando dados sobre a entrega #{numero}")
 
     # URL do endpoint no Componente A para buscar informações de entrega
-    url = f'http://127.0.0.1:5000/buscar_entrega_numero?numero_entrega={numero}'
+    url = f'http://{HOST}:5000/buscar_entrega_numero?numero_entrega={numero}'
 
     # Faça uma solicitação GET para o Componente A com os dados na URL
     response = requests.get(url)
